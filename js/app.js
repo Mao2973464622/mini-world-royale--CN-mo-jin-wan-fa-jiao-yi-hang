@@ -301,7 +301,7 @@
       return `<div class="row" data-key="${r.key}" data-cat="${r.cat}">
         <div class="r-top">
           <span class="r-name${nmCls}">${r.n}</span>
-          <span class="lvtag ${cls}">${lvText(r.lv)}</span>
+          <span class="lv-badge ${cls}">${lvText(r.lv)}</span>
           <span class="r-star ${on ? "on" : ""}">${on ? "★" : "☆"}</span>
         </div>
         <div class="r-bot">
@@ -402,7 +402,7 @@
       ? rows.map((r) => {
           const c = chgText(r);
           return `<div class="sh-row" data-key="${r.key}">
-            <span class="lvtag ${lvCls(r.lv)}" style="flex-shrink:0">${lvText(r.lv)}</span>
+            <span class="lv-badge ${lvCls(r.lv)}" style="flex-shrink:0">${lvText(r.lv)}</span>
             <span class="sh-name">${r.n}</span>
             <span class="sh-from">${shortNum(r.from)}</span>
             <span class="sh-arrow">→</span>
@@ -465,7 +465,7 @@
     const r = compute(it);
     const cls = lvCls(it.lv);
 
-    $("#moTitle").innerHTML = `${it.n} <span class="lvtag ${cls}" style="vertical-align:2px">${lvText(it.lv)}</span>`;
+    $("#moTitle").innerHTML = `${it.n} <span class="lv-badge ${cls}" style="vertical-align:2px">${lvText(it.lv)}</span>`;
     $("#moSub").textContent = `${CATS[it.cat]} · 共 ${pts.length} 次记录`;
 
     const pctCls = r.dir === "up" ? "s-up" : r.dir === "down" ? "s-down" : "s-flat";
@@ -554,219 +554,61 @@
   function refreshAll() { renderCap(); renderStats(); renderNav(); renderList(); }
 
   /* =========================================================
-     导入新记录（懒人更新通道）
-     粘贴文本 → 解析 → 预览 → 生成 items.json / prices.json
+     主题切换（数据驱动：注册表 + 渲染，新增主题无需改 JS）
      ========================================================= */
-  const impModal = $("#impModal");
-  const impState = { snapshot: null, newItems: [], itemsJSON: "", pricesJSON: "", hasNew: false };
+  const THEMES = [
+    { id:"dark-gold", name:"暗夜金",   desc:"游戏原生暗黑风，香槟金点缀 · 默认",
+      colors:["#1E1E1E","#FFD700","#FFFFFF","#333333"] },
+    { id:"paper",     name:"极简白",   desc:"护眼阅读向，浅底深色字，弱光环境友好",
+      colors:["#FFFFFF","#C99A00","#1A1A1A","#E0E0DC"] },
+    { id:"blue",      name:"深蓝科技", desc:"冷调仪表盘，监控屏质感，对比清晰",
+      colors:["#111A2A","#38BDF8","#EAF4FF","#22334A"] },
+    { id:"matrix",    name:"暗绿终端", desc:"复古终端绿，长时间盯盘不累",
+      colors:["#0E1B12","#39FF9E","#E8FFEF","#1E3A28"] },
+    { id:"sunset",    name:"黄昏暖",   desc:"暖橙低对比，夜间柔光，不刺眼",
+      colors:["#261E17","#FFC36B","#FFF2E2","#3D3228"] },
+    { id:"contrast",  name:"高对比",   desc:"黑底亮色 + 加大对比，色觉无障碍友好",
+      colors:["#161616","#FFE234","#FFFFFF","#4D4D4D"] },
+  ];
+  const THEME_KEY = "mjBoardTheme";
+  let CUR_THEME = "dark-gold";
+  try { CUR_THEME = localStorage.getItem(THEME_KEY) || "dark-gold"; } catch (e) {}
+  if (!THEMES.find((t) => t.id === CUR_THEME)) CUR_THEME = "dark-gold";
 
-  const NEW_CATS = {
-    supply_med: "恢复品", supply_drug: "药剂", supply_repair: "维修", supply_special: "特殊",
-    key_night: "暗夜迷城", key_dragon: "龙之遗迹",
-  };
-
-  function impShow(step) {
-    $$("#impModal .imp-step").forEach((el) => {
-      el.hidden = el.dataset.step !== String(step);
-    });
-  }
-  function openImport() {
-    impModal.classList.add("show"); overlay.classList.add("show");
-    impShow(1);
-    if (!$("#impTime").value) $("#impTime").value = nowStamp();
-  }
-  $("#btnImport").addEventListener("click", openImport);
-  $("#btnCloseImp").addEventListener("click", closeAll);
-  impModal.addEventListener("click", (e) => { if (e.target === impModal) closeAll(); });
-
-  function nowStamp() {
-    const d = new Date(), p = (n) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-  }
-  /* 按小时自动起标签，省得每次手填 */
-  function autoTag(t) {
-    const h = parseInt(String(t).slice(11, 13), 10);
-    if (isNaN(h)) return "";
-    if (h < 6) return "凌晨";
-    if (h < 9) return "早间";
-    if (h < 12) return "上午";
-    if (h < 14) return "午间";
-    if (h < 18) return "下午";
-    if (h < 22) return "晚间";
-    return "夜间";
+  function applyTheme(id) {
+    CUR_THEME = id;
+    document.documentElement.setAttribute("data-theme", id);
+    try { localStorage.setItem(THEME_KEY, id); } catch (e) {}
+    renderThemeList();
   }
 
-  /* ---- Step1 → Step2：解析 ---- */
-  $("#impParse").addEventListener("click", () => {
-    const text = $("#impText").value;
-    if (!text.trim()) { alert("请先粘贴记录文本"); return; }
-
-    const parsed = RecordParser.parse(text);
-    if (!parsed.rows.length) { alert("没解析到任何数据，检查一下文本格式"); return; }
-
-    // 时间以文末备注为准（你写"以上 X 月 X 号 X 点 X 记录完毕"就会被识别）
-    let time = $("#impTime").value.trim();
-    const tailTime = RecordParser.parseTailTime(parsed.tail);
-    if (tailTime) { time = tailTime; $("#impTime").value = tailTime; }
-
-    // 文本里出现的新分类（如"新武器专区"）→ 同步登记
-    const discoveredCats = parsed.newCats || {};
-    Object.entries(discoveredCats).forEach(([id, label]) => {
-      if (!CATS[id]) CATS[id] = label;
+  function renderThemeList() {
+    const box = $("#thList"); if (!box) return;
+    box.innerHTML = THEMES.map((t) => `
+      <button class="th-opt ${t.id === CUR_THEME ? "active" : ""}" data-id="${t.id}">
+        <span class="th-prevs" aria-hidden="true">
+          ${t.colors.map((c) => `<span class="th-prev" style="background:${c}"></span>`).join("")}
+        </span>
+        <span class="th-info">
+          <span class="th-name">${t.name}</span>
+          <span class="th-desc">${t.desc}</span>
+        </span>
+        <span class="th-check">✓</span>
+      </button>`).join("");
+    // 选中项预览色块同步当前主题（实时反馈）
+    const cur = THEMES.find((t) => t.id === CUR_THEME);
+    if (cur) box.querySelectorAll(".th-opt.active .th-prev").forEach((el, i) => {
+      el.style.background = cur.colors[i] || "#888";
     });
-
-    // 匹配 / 新增
-    const newItems = [];
-    const snapshot = {};
-    let matched = 0;
-    parsed.rows.forEach((row) => {
-      let it = RecordParser.findItem(ITEMS, row);
-      if (!it) {
-        it = { cat: row.cat, n: row.name, lv: row.lv };
-        newItems.push(it);
-      } else matched++;
-      snapshot[`${it.cat}|${it.n}|${it.lv}`] = row.price;
-    });
-
-    // 若文本里写了时间且与输入不同，以文本为准提示
-    impState.snapshot = snapshot;
-    impState.newItems = newItems;
-    impState.newCats = discoveredCats;
-    impState.time = time;
-    impState.tailTime = tailTime;
-    impState.unknown = parsed.unknown;
-
-    // 预览
-    const catName = (c) => CATS[c] || NEW_CATS[c] || c;
-    $("#impPreview").innerHTML = `
-      <div class="pv-grid">
-        <div class="pv-cell"><div class="k">识别总数</div><div class="v">${parsed.rows.length}</div></div>
-        <div class="pv-cell"><div class="k">匹配已有</div><div class="v v-ok">${matched}</div></div>
-        <div class="pv-cell"><div class="k">新增物资</div><div class="v ${newItems.length ? "v-new" : ""}">${newItems.length}</div></div>
-      </div>
-      <div class="pv-cell" style="margin-bottom:11px">
-        <div class="k">记录时间</div>
-        <div class="v" style="font-size:14px;font-variant-numeric:tabular-nums">${time || "（未填）"}</div>
-      </div>
-      ${parsed.unknown.length ? `
-        <div class="pv-sec"><h4>未能识别 ${parsed.unknown.length} 行</h4>
-          <div class="pv-list">${parsed.unknown.map((u) =>
-            `<div class="pv-item"><span class="n">${u}</span></div>`).join("")}</div></div>` : ""}
-      ${newItems.length ? `
-        <div class="pv-sec"><h4>将新增 ${newItems.length} 项物资</h4>
-          <div class="pv-list">${newItems.map((i) =>
-            `<div class="pv-item">
-               <span class="lvtag ${lvCls(i.lv)}" style="flex-shrink:0">${lvText(i.lv)}</span>
-               <span class="n">${i.n}</span>
-               <span class="c">${catName(i.cat)}</span>
-             </div>`).join("")}</div></div>` : ""}
-      ${tailTime ? `
-        <div class="imp-hint" style="margin-top:8px">时间已从文末备注自动识别为「${tailTime}」，可返回修改</div>` : ""}
-    `;
-    impShow(2);
+  }
+  $("#thList").addEventListener("click", (e) => {
+    const opt = e.target.closest(".th-opt"); if (!opt) return;
+    applyTheme(opt.dataset.id);
   });
+  $("#thReset").addEventListener("click", () => applyTheme("dark-gold"));
+  renderThemeList();
 
-  $("#impBack").addEventListener("click", () => impShow(1));
-
-  /* ---- Step2 → Step3：生成 JSON ---- */
-  $("#impGen").addEventListener("click", () => {
-    const time = impState.time || nowStamp();
-    const sid = "s" + (SNAPSHOTS.length + 1);
-    const short = time.slice(5);
-
-    // 1) items.json（仅在有新物资时需要更新）
-    const itemsOut = JSON.parse(JSON.stringify({ cats: CATS, groups: GROUPS, items: ITEMS }));
-    impState.newItems.forEach((i) => {
-      itemsOut.items.push(i);
-      if (!itemsOut.cats[i.cat]) itemsOut.cats[i.cat] = NEW_CATS[i.cat] || i.cat;
-    });
-    // 组别挂载
-    const grpMap = { supply: ["supply_med", "supply_drug", "supply_repair", "supply_special"], key: ["key_night", "key_dragon"] };
-    Object.entries(grpMap).forEach(([gid, cats]) => {
-      if (cats.some((c) => itemsOut.cats[c]) && !itemsOut.groups.find((g) => g.id === gid))
-        itemsOut.groups.push({ id: gid, label: gid === "supply" ? "补给品" : "钥匙", cats });
-    });
-    // 文本里新发现的分类（如"新武器"）挂到「其他」组
-    const extraCatIds = Object.keys(impState.newCats || {});
-    if (extraCatIds.length) {
-      const g = itemsOut.groups.find((x) => x.id === "other");
-      if (g) extraCatIds.forEach((c) => { if (!g.cats.includes(c)) g.cats.push(c); });
-      else itemsOut.groups.push({ id: "other", label: "其他", cats: extraCatIds });
-    }
-    delete itemsOut._comment;
-    itemsOut._comment = "物资清单。lv: 7/6/5/4 级，0=普通。新增物资在此加，并可加 alias 数组兼容不同写法。";
-
-    // 2) prices.json
-    const pricesOut = {
-      _comment: "每次记录：往 snapshots 加一条，并在 prices 里加同名 key 的价格表。页面自动识别。",
-      version: SNAPSHOTS.length + 1,
-      updated: time,
-      snapshots: SNAPSHOTS.concat([{
-        id: sid, time, short, tag: autoTag(time),
-        capital: (snapById(SNAPSHOTS[SNAPSHOTS.length - 1].id) || {}).capital || 0,
-      }]),
-      prices: Object.assign({}, PRICES, { [sid]: impState.snapshot }),
-    };
-
-    impState.hasNew = impState.newItems.length > 0;
-    impState.itemsJSON = JSON.stringify(itemsOut, null, 2);
-    impState.pricesJSON = JSON.stringify(pricesOut, null, 2);
-    impState.sid = sid;
-
-    // tab
-    $("#impTabs").innerHTML = (impState.hasNew
-      ? `<button class="imp-tab active" data-f="items">① items.json</button>
-         <button class="imp-tab" data-f="prices">② prices.json</button>`
-      : `<button class="imp-tab active" data-f="prices">prices.json</button>`);
-
-    $("#impWarn").hidden = !impState.hasNew;
-    if (impState.hasNew) {
-      $("#impWarn").innerHTML = `检测到 <b>${impState.newItems.length}</b> 项新物资，需要更新两个文件：<br>
-        先替换 <code>items.json</code>，再替换 <code>prices.json</code>，顺序不能反。`;
-    }
-
-    $("#impOut").value = impState.hasNew ? impState.itemsJSON : impState.pricesJSON;
-    impShow(3);
-  });
-
-  $("#impBack2").addEventListener("click", () => impShow(2));
-
-  $("#impTabs").addEventListener("click", (e) => {
-    const t = e.target.closest(".imp-tab"); if (!t) return;
-    $$("#impTabs .imp-tab").forEach((x) => x.classList.toggle("active", x === t));
-    $("#impOut").value = t.dataset.f === "items" ? impState.itemsJSON : impState.pricesJSON;
-    $("#impOut").scrollTop = 0;
-  });
-
-  $("#impCopy").addEventListener("click", async () => {
-    const ta = $("#impOut");
-    try {
-      await navigator.clipboard.writeText(ta.value);
-    } catch (e) {
-      ta.removeAttribute("readonly"); ta.select();
-      document.execCommand("copy");
-      ta.setAttribute("readonly", "");
-    }
-    const btn = $("#impCopy");
-    const old = btn.textContent;
-    btn.textContent = "已复制 ✓";
-    setTimeout(() => { btn.textContent = old; }, 1400);
-  });
-
-  $("#impDown").addEventListener("click", () => {
-    const active = ($("#impTabs .imp-tab.active") || {}).dataset;
-    const isItems = impState.hasNew && active && active.f === "items";
-    const name = isItems ? "items.json" : "prices.json";
-    const blob = new Blob([isItems ? impState.itemsJSON : impState.pricesJSON],
-      { type: "application/json;charset=utf-8" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  });
-
-  /* ---------------- 启动 ---------------- */
+  /* ---------------- 字体切换 ---------------- */
   async function boot() {
     // 字体偏好
     let fmode = "hand";

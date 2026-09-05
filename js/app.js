@@ -15,7 +15,7 @@
   /* ---------------- 工具 ---------------- */
   const keyOf  = (it) => `${it.cat}|${it.n}|${it.lv}`;
   const lvCls  = (lv) => "lv" + ([7, 6, 5, 4].includes(lv) ? lv : 0);
-  const lvText = (lv) => ([7, 6, 5, 4].includes(lv) ? lv + "级" : "普通");
+  const lvText = (lv) => `<span class="lv-txt">${[7, 6, 5, 4].includes(lv) ? lv + "级" : "普通"}</span>`;
   const LVRANK = { 7: 5, 6: 4, 5: 3, 4: 2, 0: 1 };
   const fmt    = (n) => (n == null ? "—" : n.toLocaleString("en-US"));
 
@@ -96,30 +96,11 @@
   selFrom.addEventListener("change", (e) => { state.from = e.target.value; refreshAll(); });
   selTo.addEventListener("change",   (e) => { state.to   = e.target.value; refreshAll(); });
 
-  /* ---------------- 元信息行 ---------------- */
-  const capBar = $("#capBar"), capDetail = $("#capDetail");
-  capBar.addEventListener("click", () => {
-    const open = capBar.getAttribute("aria-expanded") === "true";
-    capBar.setAttribute("aria-expanded", String(!open));
-    capDetail.classList.toggle("open", !open);
-  });
-
+  /* ---------------- 区间 / 时间戳（已移除本金显示） ---------------- */
   function renderCap() {
     const cur  = snapById(state.to);
     const base = snapById(state.from);
-    const idx  = SNAPSHOTS.findIndex((s) => s.id === state.to);
-    const prev = idx > 0 ? SNAPSHOTS[idx - 1] : null;
-
-    $("#capValue").textContent = fmt(cur.capital);
-    $("#capTime").textContent  = cur.short;
-    $("#capAgo").textContent   = agoText(cur.time);
-    $("#cdTime").textContent   = cur.short;
-    $("#cdTag").textContent    = cur.tag || "—";
-    $("#cdCount").textContent  = Object.keys(PRICES[cur.id] || {}).length + " 项";
-    $("#cdSpan").textContent   = prev ? spanText(prev.time, cur.time) : "首次基线";
-    $("#cdUpd").textContent    = DATA_UPDATED || "—";
-
-    const sp = spanText(base.time, cur.time);
+    const sp   = spanText(base.time, cur.time);
     $("#cmpSpan").innerHTML = `${base.short} → ${cur.short} · 间隔 <b>${sp}</b>`;
     $("#footMid").textContent = `最新 ${cur.short} · ${agoText(cur.time)}`;
   }
@@ -372,7 +353,7 @@
           ${isBase ? '<span class="tl-badge base">基准</span>' : ""}
           ${isCur  ? '<span class="tl-badge cur">当前</span>' : ""}
         </div>
-        <div class="tl-meta">${s.tag || "—"} · ${cnt} 项 · 本金 ${fmt(s.capital)}
+        <div class="tl-meta">${s.tag || "—"} · ${cnt} 项
           ${prev ? `<br>较上一次 ${spanText(prev.time, s.time)}` : "<br>首次基线记录"}</div>
         <div class="tl-acts">
           <button class="tl-btn" data-set="from" data-id="${s.id}" ${isBase ? "disabled" : ""}>设为基准</button>

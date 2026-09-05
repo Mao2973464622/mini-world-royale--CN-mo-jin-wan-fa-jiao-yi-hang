@@ -1,6 +1,12 @@
 /* =============================================================
    主题样式表 · 主题通过 <html data-theme="..."> 切换
    每套主题只重写颜色变量，不改动布局。
+
+   等级标签配色契约（每个主题都必须定义，保证跨主题可读）：
+     --lv{N}-bg  : 标签底色（不透明，与前景色强对比）
+     --lv{N}-fg  : 文字 / 扫光带颜色
+     --lv{N}-glow: 辉光颜色
+   美观度阶梯：7级(炫彩) > 6级(赤红) > 5级(鎏金) > 4级(靛蓝) > 普通(灰)
    ============================================================= */
 
 /* ================= 1. 暗夜金（默认，游戏原生暗黑风） ================= */
@@ -10,27 +16,28 @@ html[data-theme="dark-gold"]{
   --divider:#333333;     --divider-soft:rgba(255,255,255,.055);
   --tx-hi:#FFFFFF;       --tx-mid:#EEEEEE;       --tx-sub:#8A8A8A;     --tx-dim:#5F5F5F;
   --lv7-a:#F4D03F; --lv7-b:#7FE8FF; --lv7-c:#C77DFF;
-  --lv6:#FF4D4F; --lv6-soft:rgba(255,77,79,.20);
-  --lv5:#FFD700; --lv5-soft:rgba(255,215,0,.20);
-  --lv4:#4DB8FF; --lv4-soft:rgba(77,184,255,.18);
-  --lv0:#6B6B6B; --lv0-soft:rgba(255,255,255,.06);
+  --lv7-bg:#2E1240; --lv7-fg:#FFE234; --lv7-glow:#F4D03F;
+  --lv6-bg:#3A0E12; --lv6-fg:#FF8A8A; --lv6-glow:#FF4D4F;
+  --lv5-bg:#3A2E05; --lv5-fg:#FFD700; --lv5-glow:#FFD700;
+  --lv4-bg:#0E2438; --lv4-fg:#7AC8FF; --lv4-glow:#4DB8FF;
+  --lv0-bg:#262626; --lv0-fg:#D4D4D4; --lv0-glow:#888888;
   --gold:#FFD700; --up:#FF4D4F; --down:#5FBF80; --flat:#4A4A4A;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:var(--gold);
 }
 
-/* ================= 2. 极简白（护眼 · 阅读向） ================= */
+/* ================= 2. 极简白（护眼 · 阅读向，浅底深字） ================= */
 html[data-theme="paper"]{
   --bg-app:#F2F2F0;      --bg-side:#EAEAE6;      --bg-card:#FFFFFF;
   --bg-card2:#F5F5F2;    --bg-row-odd:#FFFFFF;   --bg-row-even:#F6F6F3;
   --divider:#E0E0DC;     --divider-soft:rgba(0,0,0,.05);
   --tx-hi:#1A1A1A;       --tx-mid:#2B2B2B;       --tx-sub:#8A8A8A;     --tx-dim:#A8A8A8;
-  /* 浅底上：等级降饱和、提明度，保证可读性 */
-  --lv7-a:#C99A00; --lv7-b:#1E9EC0; --lv7-c:#9B4FD0;
-  --lv6:#E04848; --lv6-soft:rgba(224,72,72,.14);
-  --lv5:#C99A00; --lv5-soft:rgba(201,154,0,.14);
-  --lv4:#2E93D6; --lv4-soft:rgba(46,147,214,.14);
-  --lv0:#9A9A9A; --lv0-soft:rgba(0,0,0,.05);
+  --lv7-a:#A87800; --lv7-b:#1E9EC0; --lv7-c:#8A3FB0;
+  --lv7-bg:#F3E7A0; --lv7-fg:#6B4A00; --lv7-glow:#C99A00;
+  --lv6-bg:#FBE0E0; --lv6-fg:#9E2920; --lv6-glow:#E04848;
+  --lv5-bg:#F4EBC8; --lv5-fg:#7A5600; --lv5-glow:#C99A00;
+  --lv4-bg:#DCF0FB; --lv4-fg:#1E6FA0; --lv4-glow:#2E93D6;
+  --lv0-bg:#ECECEC; --lv0-fg:#4A4A4A; --lv0-glow:#AAAAAA;
   --gold:#C99A00; --up:#E04848; --down:#2E9E5B; --flat:#B0B0B0;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:#C99A00;
@@ -43,10 +50,11 @@ html[data-theme="blue"]{
   --divider:#22334A;     --divider-soft:rgba(90,160,255,.10);
   --tx-hi:#EAF4FF;       --tx-mid:#C7D8EE;       --tx-sub:#7A90AC;     --tx-dim:#566A85;
   --lv7-a:#00E5FF; --lv7-b:#80FFEA; --lv7-c:#B388FF;
-  --lv6:#FF6B6B; --lv6-soft:rgba(255,107,107,.20);
-  --lv5:#38BDF8; --lv5-soft:rgba(56,189,248,.20);
-  --lv4:#7DD3FC; --lv4-soft:rgba(125,211,252,.18);
-  --lv0:#5A6A80; --lv0-soft:rgba(125,211,252,.06);
+  --lv7-bg:#0E2B3C; --lv7-fg:#5CE0F0; --lv7-glow:#00E5FF;
+  --lv6-bg:#3A1018; --lv6-fg:#FF9090; --lv6-glow:#FF6B6B;
+  --lv5-bg:#0E2638; --lv5-fg:#7DD3FC; --lv5-glow:#38BDF8;
+  --lv4-bg:#0F2A40; --lv4-fg:#AEE6FF; --lv4-glow:#7DD3FC;
+  --lv0-bg:#162536; --lv0-fg:#9AB0C8; --lv0-glow:#4A6080;
   --gold:#38BDF8; --up:#FF6B6B; --down:#4ADE80; --flat:#3D4A60;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:#38BDF8;
@@ -59,10 +67,11 @@ html[data-theme="matrix"]{
   --divider:#1E3A28;     --divider-soft:rgba(80,220,120,.10);
   --tx-hi:#E8FFEF;       --tx-mid:#B8E6C4;       --tx-sub:#6FAE7E;     --tx-dim:#4A7A58;
   --lv7-a:#39FF9E; --lv7-b:#00E5FF; --lv7-c:#C77DFF;
-  --lv6:#FF5C5C; --lv6-soft:rgba(255,92,92,.22);
-  --lv5:#39FF9E; --lv5-soft:rgba(57,255,158,.18);
-  --lv4:#6FE3B0; --lv4-soft:rgba(111,227,176,.16);
-  --lv0:#4A7A58; --lv0-soft:rgba(120,220,160,.06);
+  --lv7-bg:#0E3320; --lv7-fg:#39FF9E; --lv7-glow:#39FF9E;
+  --lv6-bg:#3A1010; --lv6-fg:#FF8585; --lv6-glow:#FF5C5C;
+  --lv5-bg:#0E3824; --lv5-fg:#6FE3B0; --lv5-glow:#39FF9E;
+  --lv4-bg:#0F2E25; --lv4-fg:#A6EFC8; --lv4-glow:#6FE3B0;
+  --lv0-bg:#15281C; --lv0-fg:#8FAE9A; --lv0-glow:#4A7A58;
   --gold:#39FF9E; --up:#FF5C5C; --down:#39FF9E; --flat:#2E5A40;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:#39FF9E;
@@ -75,10 +84,11 @@ html[data-theme="sunset"]{
   --divider:#3D3228;     --divider-soft:rgba(255,190,140,.08);
   --tx-hi:#FFF2E2;       --tx-mid:#EFD9C2;       --tx-sub:#B09276;     --tx-dim:#8A7058;
   --lv7-a:#FFD166; --lv7-b:#FF9A76; --lv7-c:#C77DFF;
-  --lv6:#FF7A59; --lv6-soft:rgba(255,122,89,.22);
-  --lv5:#FFC36B; --lv5-soft:rgba(255,195,107,.20);
-  --lv4:#7FC8E0; --lv4-soft:rgba(127,200,224,.18);
-  --lv0:#8A7058; --lv0-soft:rgba(255,200,140,.07);
+  --lv7-bg:#3A2A10; --lv7-fg:#FFD166; --lv7-glow:#FFD166;
+  --lv6-bg:#3A1C12; --lv6-fg:#FF9A76; --lv6-glow:#FF7A59;
+  --lv5-bg:#3A2E14; --lv5-fg:#FFC36B; --lv5-glow:#FFC36B;
+  --lv4-bg:#123040; --lv4-fg:#9FD8EC; --lv4-glow:#7FC8E0;
+  --lv0-bg:#2C2418; --lv0-fg:#CBB49A; --lv0-glow:#8A7058;
   --gold:#FFC36B; --up:#FF7A59; --down:#7FC8A0; --flat:#5A4A3C;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:#FFC36B;
@@ -91,100 +101,131 @@ html[data-theme="contrast"]{
   --divider:#4D4D4D;     --divider-soft:rgba(255,255,255,.14);
   --tx-hi:#FFFFFF;       --tx-mid:#FFFFFF;       --tx-sub:#D0D0D0;     --tx-dim:#A6A6A6;
   --lv7-a:#FFE234; --lv7-b:#00E5FF; --lv7-c:#D966FF;
-  --lv6:#FF3B3B; --lv6-soft:rgba(255,59,59,.28);
-  --lv5:#FFE234; --lv5-soft:rgba(255,226,52,.26);
-  --lv4:#3BD0FF; --lv4-soft:rgba(59,208,255,.26);
-  --lv0:#A6A6A6; --lv0-soft:rgba(255,255,255,.10);
+  --lv7-bg:#2A2000; --lv7-fg:#FFE234; --lv7-glow:#FFE234;
+  --lv6-bg:#3A0000; --lv6-fg:#FF7777; --lv6-glow:#FF3B3B;
+  --lv5-bg:#2A2400; --lv5-fg:#FFE234; --lv5-glow:#FFE234;
+  --lv4-bg:#003040; --lv4-fg:#6FE0FF; --lv4-glow:#3BD0FF;
+  --lv0-bg:#2A2A2A; --lv0-fg:#FFFFFF; --lv0-glow:#808080;
   --gold:#FFE234; --up:#FF3B3B; --down:#3BD07A; --flat:#808080;
   --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --accent:#FFE234;
 }
 
-/* ================= 等级标签：五套独立动效，全部持续循环、肉眼显眼 ================= */
-/*
-  统一模式：底板渐变持续扫光（::after 层，永不间断）+ 外辉光脉冲（box-shadow）。
-  文字保持高亮实色以保证行楷可读；7级额外享有彩虹流光文字（顶级物资特权）。
-  每级周期 2.2~3.2s 错开，避免整屏同步闪烁；尊重 prefers-reduced-motion。
-*/
+/* ===================================================================
+   等级标签 —— 完全自包含，颜色与动效均不依赖主题变量。
+   无论切换到哪套主题，标签的底色 / 文字 / 扫光 / 辉光都固定不变，
+   从根本上杜绝"主题样式干扰动效"导致的怪异观感。
+
+   美观度阶梯（动效强度 · 周期错开避免整屏同步闪）：
+     7级 炫彩流光(2.2s) > 6级 赤红脉冲(2.4s) > 5级 鎏金扫光(2.8s)
+     > 4级 靛蓝微澜(3.0s) > 普通 银灰呼吸(3.6s)
+
+   颜色方案（深色主题通用 · 浓郁深底 + 明亮文字，对比度充足）：
+     7级 深紫底 + 彩虹流光文字    6级 深红底 + 浅红字
+     5级 深金底 + 金字            4级 深蓝底 + 浅蓝字
+     普通 深灰底 + 浅灰字
+   [data-theme="paper"] 浅色主题：仅反转 4/5/6/普通 的 底/字（保持协调）；
+   7级 保持深色底以承载彩虹流光（顶级物资特权）。
+   =================================================================== */
+
+/* ---------- 公共结构（与各主题解耦） ---------- */
 .lv-badge{
-  position:relative; isolation:isolate; overflow:hidden;
+  /* 默认值 = 普通级；各级在自己的规则里覆盖 */
+  --lv-fg:#D4D4D4; --glow:#888888; --bd:3.6s; --sw:3.4s;
+  position:relative; overflow:hidden;
   display:inline-flex; align-items:center; justify-content:center;
   height:19px; padding:0 8px; border-radius:5px; line-height:1;
   font-size:10.5px; font-weight:700; letter-spacing:.3px; flex-shrink:0;
-  white-space:nowrap;
-  background:var(--lv0-soft); color:var(--lv0); /* 兜底 = 普通级 */
+  white-space:nowrap; isolation:isolate;
+  background:#262626; color:#D4D4D4;
+  animation:lvPulse var(--bd) ease-in-out infinite;
 }
-/* 底板扫光层：所有等级共用无限循环，各自只换渐变色 */
+/* 文字层：恒在最上层，绝不参与扫光 */
+.lv-badge .lv-txt{ position:relative; z-index:2; }
+/* 扫光带：使用固定的等级 fg 色，不再引用任何主题变量 */
 .lv-badge::after{
-  content:""; position:absolute; inset:0; z-index:-1;
+  content:""; position:absolute; inset:0; z-index:0;
+  background:linear-gradient(90deg,transparent 0%,var(--lv-fg) 46%,var(--lv-fg) 54%,transparent 100%);
   background-size:220% 100%; background-position:0% 50%;
-  animation:sweep 2.6s linear infinite;
+  opacity:.6;
+  animation:sweep var(--sw) linear infinite;
+}
+@keyframes lvPulse{
+  0%,100%{ box-shadow:0 0 0 1px color-mix(in srgb,var(--lv-fg) 40%,transparent),
+                       0 0 4px color-mix(in srgb,var(--glow) 25%,transparent); }
+  50%   { box-shadow:0 0 0 1px color-mix(in srgb,var(--lv-fg) 65%,transparent),
+                       0 0 13px color-mix(in srgb,var(--glow) 85%,transparent); }
 }
 @keyframes sweep{ to{ background-position:220% 50%; } }
-
-/* ---- 7级：彩虹流光文字 + 彩虹底板 + 强辉光脉冲（顶级特权） ---- */
-.lv-badge.lv7{
-  color:transparent;
-  background:var(--flow) 0% 50%/220% 100%;
-  -webkit-background-clip:text; background-clip:text;
-  animation:glow7 2.2s ease-in-out infinite;
-}
-.lv-badge.lv7::after{ background-image:var(--flow); animation-duration:2.4s; }
-@keyframes glow7{
-  0%,100%{ box-shadow:0 0 4px color-mix(in srgb,var(--lv7-a) 45%,transparent), inset 0 0 4px color-mix(in srgb,var(--lv7-c) 35%,transparent); }
-  50%   { box-shadow:0 0 13px color-mix(in srgb,var(--lv7-a) 85%,transparent), inset 0 0 7px color-mix(in srgb,var(--lv7-c) 60%,transparent); }
-}
-
-/* ---- 6级：赤红渐变扫光 + 红色辉光脉冲（周期错开） ---- */
-.lv-badge.lv6{ color:#fff; animation:glow6 2.4s ease-in-out infinite; }
-.lv-badge.lv6::after{ background-image:linear-gradient(90deg,
-  color-mix(in srgb,var(--lv6) 30%,#000) 0%,
-  var(--lv6) 28%, color-mix(in srgb,var(--lv6) 72%,#fff) 50%,
-  var(--lv6) 72%, color-mix(in srgb,var(--lv6) 30%,#000) 100%); }
-@keyframes glow6{
-  0%,100%{ box-shadow:0 0 3px color-mix(in srgb,var(--lv6) 40%,transparent); }
-  50%   { box-shadow:0 0 12px color-mix(in srgb,var(--lv6) 88%,transparent), 0 0 0 2px color-mix(in srgb,var(--lv6) 32%,transparent); }
-}
-
-/* ---- 5级：鎏金渐变扫光 + 金色辉光 ---- */
-.lv-badge.lv5{ color:#1a1400; animation:glow5 2.8s ease-in-out infinite; }
-.lv-badge.lv5::after{ background-image:linear-gradient(90deg,
-  color-mix(in srgb,var(--lv5) 35%,#000) 0%,
-  var(--lv5) 28%, color-mix(in srgb,var(--lv5) 78%,#fff) 50%,
-  var(--lv5) 72%, color-mix(in srgb,var(--lv5) 35%,#000) 100()); }
-@keyframes glow5{
-  0%,100%{ box-shadow:0 0 3px color-mix(in srgb,var(--lv5) 40%,transparent); }
-  50%   { box-shadow:0 0 12px color-mix(in srgb,var(--lv5) 90%,transparent); }
-}
-
-/* ---- 4级：靛蓝渐变扫光 + 蓝色辉光 ---- */
-.lv-badge.lv4{ color:#eaf6ff; animation:glow4 3s ease-in-out infinite; }
-.lv-badge.lv4::after{ background-image:linear-gradient(90deg,
-  color-mix(in srgb,var(--lv4) 30%,#000) 0%,
-  var(--lv4) 28%, color-mix(in srgb,var(--lv4) 74%,#fff) 50%,
-  var(--lv4) 72%, color-mix(in srgb,var(--lv4) 30%,#000) 100()); }
-@keyframes glow4{
-  0%,100%{ box-shadow:0 0 3px color-mix(in srgb,var(--lv4) 40%,transparent); }
-  50%   { box-shadow:0 0 12px color-mix(in srgb,var(--lv4) 90%,transparent); }
-}
-
-/* ---- 普通级：银灰渐变扫光 + 柔和辉光（低调但明确在动） ---- */
-.lv-badge.lv0{ color:#dcdcdc; animation:glow0 3.2s ease-in-out infinite; }
-.lv-badge.lv0::after{ background-image:linear-gradient(90deg,
-  color-mix(in srgb,var(--lv0) 25%,#000) 0%,
-  color-mix(in srgb,var(--lv0) 88%,#fff) 30%, var(--lv0) 50%,
-  color-mix(in srgb,var(--lv0) 88%,#fff) 70%, color-mix(in srgb,var(--lv0) 25%,#000) 100()); }
-@keyframes glow0{
-  0%,100%{ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lv0) 35%,transparent), 0 0 2px color-mix(in srgb,var(--lv0) 25%,transparent); }
-  50%   { box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--lv0) 72%,transparent), 0 0 9px color-mix(in srgb,var(--lv0) 62%,transparent); }
-}
-
-/* 兼容：7级名称流光（style.css 中 .r-name.lv7 等仍引用此 keyframe） */
 @keyframes flowMove{ to{ background-position:220% 50%; } }
 
+/* ---------- 7级 · 炫彩流光（顶级物资特权 · 最华丽） ---------- */
+.lv-badge.lv7{
+  --lv-fg:#FFE234; --glow:#F4D03F; --bd:2.2s; --sw:2.2s;
+  background:#2E1240; color:transparent;
+}
+.lv-badge.lv7 .lv-txt{
+  color:transparent;
+  background:linear-gradient(90deg,#F4D03F,#7FE8FF,#C77DFF,#7FE8FF,#F4D03F) 0% 50%/220% 100%;
+  -webkit-background-clip:text; background-clip:text;
+  animation:flowMove 3s linear infinite;
+}
+.lv-badge.lv7::after{
+  background:linear-gradient(90deg,transparent 0%,#F4D03F 30%,#7FE8FF 50%,#C77DFF 70%,transparent 100%);
+  background-size:220% 100%; opacity:.9;
+}
+
+/* ---------- 6级 · 赤红（次强 · 脉冲外扩 + 扫光） ---------- */
+.lv-badge.lv6{
+  --lv-fg:#FF8A8A; --glow:#FF4D4F; --bd:2.4s; --sw:2.4s;
+  background:#3A0E12; color:#FF8A8A;
+}
+.lv-badge.lv6::after{ opacity:.75; }
+
+/* ---------- 5级 · 鎏金（中等 · 扫光 + 辉光） ---------- */
+.lv-badge.lv5{
+  --lv-fg:#FFD700; --glow:#FFD700; --bd:2.8s; --sw:2.8s;
+  background:#3A2E05; color:#FFD700;
+}
+.lv-badge.lv5::after{ opacity:.7; }
+
+/* ---------- 4级 · 靛蓝（柔和 · 弱扫光 + 轻辉光） ---------- */
+.lv-badge.lv4{
+  --lv-fg:#7AC8FF; --glow:#4DB8FF; --bd:3.0s; --sw:3.0s;
+  background:#0E2438; color:#7AC8FF;
+}
+.lv-badge.lv4::after{ opacity:.55; }
+
+/* ---------- 普通 · 银灰（极弱呼吸，不抢戏） ---------- */
+.lv-badge.lv0{
+  --lv-fg:#D4D4D4; --glow:#888888; --bd:3.6s; --sw:3.4s;
+  background:#262626; color:#D4D4D4;
+}
+.lv-badge.lv0::after{ opacity:.35; }
+
+/* ---------- 浅色主题（paper）适配：仅反转 4/5/6/普通；7级保持深色 ---------- */
+html[data-theme="paper"] .lv-badge.lv6{ background:#FBE0E0; color:#9E2920; --lv-fg:#9E2920; --glow:#E04848; }
+html[data-theme="paper"] .lv-badge.lv5{ background:#F4EBC8; color:#7A5600; --lv-fg:#7A5600; --glow:#C99A00; }
+html[data-theme="paper"] .lv-badge.lv4{ background:#DCF0FB; color:#124E6E; --lv-fg:#124E6E; --glow:#2E93D6; }
+html[data-theme="paper"] .lv-badge.lv0{ background:#ECECEC; color:#4A4A4A; --lv-fg:#4A4A4A; --glow:#AAAAAA; }
+html[data-theme="paper"] .lv-badge.lv7{ --glow:#C99A00; }
+
+/* ---------- 7级名称：固定彩虹流光，不随主题变色（顶级特权） ---------- */
+.r-name.lv7, .nm.lv7, .sh-name.lv7{
+  background:linear-gradient(90deg,#F4D03F,#7FE8FF,#C77DFF,#7FE8FF,#F4D03F) 0% 50%/320% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:flowMove 3s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(199,125,255,.35));
+}
+
+/* 减弱动效偏好：静态兜底，文字始终可读 */
 @media (prefers-reduced-motion:reduce){
-  .lv-badge, .lv-badge::after{ animation:none !important; }
-  .lv-badge.lv7{ color:var(--lv7-a); -webkit-background-clip:initial; background-clip:initial; }
+  .lv-badge, .lv-badge::after, .lv-badge .lv-txt,
+  .r-name.lv7, .nm.lv7, .sh-name.lv7{ animation:none !important; }
+  .lv-badge.lv7 .lv-txt{
+    color:var(--lv-fg); -webkit-background-clip:initial; background-clip:initial;
+    -webkit-text-fill-color:currentColor; background-image:none;
+  }
 }
 
 /* 主题预览色块（设置面板用） */

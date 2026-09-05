@@ -3,6 +3,8 @@
    字体：行楷优先（系统行楷 → 霞鹜文楷 → 楷体 → 系统黑体）
    ============================================================= */
 
+/* 主题配色集中在 css/theme.css，通过 <html data-theme> 切换。
+   默认主题 = dark-gold；未声明 data-theme 时由这里兜底。 */
 :root{
   /* ---- 字体 ---- */
   --font-hand:"Xingkai SC","STXingkai","华文行楷","行楷",
@@ -14,35 +16,21 @@
   --font-num:"DIN Alternate","DIN Condensed","Roboto Condensed","Oswald",
              ui-monospace,"SF Mono",Menlo,Consolas,monospace;
 
-  /* ---- 层级灰度 ---- */
-  --bg-app:#121212;
-  --bg-side:#0F0F0F;
-  --bg-card:#1E1E1E;
-  --bg-card2:#252525;
-  --bg-row-odd:#121212;
-  --bg-row-even:#181818;
-  --divider:#333333;
-  --divider-soft:rgba(255,255,255,.055);
-
-  /* ---- 文字 ---- */
-  --tx-hi:#FFFFFF;
-  --tx-mid:#EEEEEE;
-  --tx-sub:#8A8A8A;
-  --tx-dim:#5F5F5F;
-
-  /* ---- 等级配色 ---- */
-  --lv7-a:#F4D03F; --lv7-b:#7FE8FF; --lv7-c:#C77DFF;
-  --lv6:#FF4D4F;
-  --lv5:#FFD700;
-  --lv4:#4DB8FF;
-  --lv0:#6B6B6B;
-  --gold:#FFD700;
-  --up:#FF4D4F;
-  --down:#5FBF80;
-  --flat:#4A4A4A;
-
-  --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
   --r:12px;
+}
+html[data-theme="dark-gold"]{
+  --bg-app:#121212;      --bg-side:#0F0F0F;      --bg-card:#1E1E1E;
+  --bg-card2:#252525;    --bg-row-odd:#121212;   --bg-row-even:#181818;
+  --divider:#333333;     --divider-soft:rgba(255,255,255,.055);
+  --tx-hi:#FFFFFF;       --tx-mid:#EEEEEE;       --tx-sub:#8A8A8A;     --tx-dim:#5F5F5F;
+  --lv7-a:#F4D03F; --lv7-b:#7FE8FF; --lv7-c:#C77DFF;
+  --lv6:#FF4D4F; --lv6-soft:rgba(255,77,79,.20);
+  --lv5:#FFD700; --lv5-soft:rgba(255,215,0,.20);
+  --lv4:#4DB8FF; --lv4-soft:rgba(77,184,255,.18);
+  --lv0:#6B6B6B; --lv0-soft:rgba(255,255,255,.06);
+  --gold:#FFD700; --up:#FF4D4F; --down:#5FBF80; --flat:#4A4A4A;
+  --flow:linear-gradient(90deg,var(--lv7-a),var(--lv7-b),var(--lv7-c),var(--lv7-b),var(--lv7-a));
+  --accent:var(--gold);
 }
 
 /* 字体模式：默认行楷；html.font-sys 切换为黑体 */
@@ -84,132 +72,14 @@ main,.dw-body,.sh-body,.mo-card,.stats,.chips,nav{
 .icon-btn:active{transform:scale(.94)}
 #btnFont.on{color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,215,0,.4)}
 
-/* 等级圆点：全部持续循环，无停顿 */
-.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
-.dot.lv5{
-  background:var(--lv5);
-  animation:breathe5 3.2s ease-in-out infinite;
-}
-.dot.lv6{
-  background:var(--lv6);
-  animation:pulseDot6 2.4s ease-in-out infinite;
-}
-.dot.lv4{
-  background:var(--lv4);
-  animation:breathe4 3.2s ease-in-out infinite;
-}
-.dot.lv0{
-  background:var(--lv0);
-  animation:breathe0 4.2s ease-in-out infinite;
-}
-.dot.lv7{
-  background:var(--flow);background-size:320% 100%;
-  animation:flow 3s linear infinite, glowDot7 2.6s ease-in-out infinite;
-}
-@keyframes flow{to{background-position:320% 0}}
-@keyframes glowDot7{
-  0%,100%{box-shadow:0 0 6px rgba(199,125,255,.30)}
-  50%    {box-shadow:0 0 14px rgba(199,125,255,.75)}
-}
-@keyframes pulseDot6{
-  0%,100%{box-shadow:0 0 5px rgba(255,77,79,.32)}
-  50%    {box-shadow:0 0 12px rgba(255,77,79,.80)}
-}
-@keyframes breathe5{
-  0%,100%{box-shadow:0 0 5px rgba(255,215,0,.30)}
-  50%    {box-shadow:0 0 12px rgba(255,215,0,.72)}
-}
-@keyframes breathe4{
-  0%,100%{opacity:.70;box-shadow:0 0 4px rgba(77,184,255,.26)}
-  50%    {opacity:1;  box-shadow:0 0 10px rgba(77,184,255,.62)}
-}
-@keyframes breathe0{
-  0%,100%{opacity:.58}
-  50%    {opacity:.92}
-}
-
-/* ===================== 等级标签：五套样式 + 全部持续循环动效 ===================== */
-.lvtag{
-  position:relative;overflow:hidden;
-  font-size:10px;font-weight:700;letter-spacing:.5px;flex-shrink:0;
-  padding:2px 7px;border-radius:5px;line-height:1.35;border:0;
-  font-family:var(--font-cur);white-space:nowrap;
-}
-
-/* 7级 · 炫彩流光 + 辉光呼吸（3s + 2.6s 双循环，永不停歇） */
-.lvtag.lv7{
-  color:transparent;
-  background-image:var(--flow);
-  background-size:320% 100%;
-  -webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;
-  animation:flow 3s linear infinite, glow7 2.6s ease-in-out infinite;
-}
-@keyframes glow7{
-  0%,100%{box-shadow:inset 0 0 0 1px rgba(199,125,255,.26), 0 0 5px rgba(199,125,255,.14)}
-  50%    {box-shadow:inset 0 0 0 1px rgba(199,125,255,.58), 0 0 12px rgba(199,125,255,.40)}
-}
-
-/* 6级 · 赤红脉冲（2.4s 连续正弦，无停顿） */
-.lvtag.lv6{
-  color:#FF8A80;background:rgba(255,77,79,.18);
-  animation:pulse6 2.4s ease-in-out infinite;
-}
-@keyframes pulse6{
-  0%,100%{box-shadow:inset 0 0 0 1px rgba(255,77,79,.26), 0 0 0 0 rgba(255,77,79,0)}
-  50%    {box-shadow:inset 0 0 0 1px rgba(255,77,79,.62), 0 0 9px 1px rgba(255,77,79,.30)}
-}
-
-/* 5级 · 鎏金扫光（2.8s 连续扫过，首尾不留空白） */
-.lvtag.lv5{
-  color:#FFDF73;background:rgba(255,215,0,.18);
-  animation:glow5 3.2s ease-in-out infinite;
-}
-@keyframes glow5{
-  0%,100%{box-shadow:inset 0 0 0 1px rgba(255,215,0,.20)}
-  50%    {box-shadow:inset 0 0 0 1px rgba(255,215,0,.52), 0 0 8px rgba(255,215,0,.24)}
-}
-.lvtag.lv5::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(105deg,
-    transparent 30%,
-    rgba(255,255,255,.10) 42%,
-    rgba(255,255,255,.68) 50%,
-    rgba(255,255,255,.10) 58%,
-    transparent 70%);
-  animation:shimmer 2.8s linear infinite;
-}
-@keyframes shimmer{
-  0%  {transform:translateX(-140%)}
-  100%{transform:translateX(140%)}
-}
-
-/* 4级 · 靛青微澜（3.2s 连续呼吸） */
-.lvtag.lv4{
-  color:#8ACBFF;background:rgba(77,184,255,.15);
-  animation:breatheTag4 3.2s ease-in-out infinite;
-}
-@keyframes breatheTag4{
-  0%,100%{opacity:.72;box-shadow:inset 0 0 0 1px rgba(77,184,255,.16)}
-  50%    {opacity:1;  box-shadow:inset 0 0 0 1px rgba(77,184,255,.44), 0 0 7px rgba(77,184,255,.22)}
-}
-
-/* 普通 · 灰烬微光（4.2s 极缓呼吸，低调但不静止） */
-.lvtag.lv0{
-  color:#8A8A8A;background:rgba(255,255,255,.055);
-  animation:breatheTag0 4.2s ease-in-out infinite;
-}
-@keyframes breatheTag0{
-  0%,100%{opacity:.62;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}
-  50%    {opacity:1;  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-}
+/* ===================== 等级标签（配色变量与全部动效见 theme.css，此处不再重复定义） ===================== */
 
 /* 7级名称：彩虹流光文字 */
-.nm.lv7{
+.r-name.lv7, .nm.lv7, .sh-name.lv7{
   background:var(--flow);background-size:320% 100%;
   -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  animation:flow 3s linear infinite;
-  filter:drop-shadow(0 0 8px rgba(199,125,255,.35));
+  animation:flowMove 3s linear infinite;
+  filter:drop-shadow(0 0 8px color-mix(in srgb,var(--lv7-c,var(--lv5)) 35%,transparent));
 }
 
 /* ===================== HEADER ===================== */
@@ -601,82 +471,32 @@ footer .f-mid{flex:1;text-align:center;color:var(--tx-dim);font-weight:600;
   *{animation:none !important;transition:none !important}
 }
 
-/* ===================== 导入记录 ===================== */
-.imp-card{width:min(520px,100%)}
-.imp-step[hidden]{display:none}
-
-.imp-row{margin-bottom:10px}
-.imp-label{display:block;font-size:10px;color:var(--tx-dim);font-weight:700;
-  letter-spacing:.6px;margin-bottom:5px}
-.imp-hint{display:block;font-size:9.5px;color:var(--tx-dim);font-weight:600;
-  margin-top:4px;line-height:1.6;opacity:.85}
-.imp-input{
-  width:100%;background:var(--bg-app);border:0;border-radius:8px;
-  padding:8px 10px;color:var(--tx-hi);font-size:12.5px;font-weight:700;
-  font-family:var(--font-num);letter-spacing:.5px;outline:none;line-height:1.45;
+/* ===================== 主题设置（抽屉内） ===================== */
+.th-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.th-opt{
+  display:flex;align-items:center;gap:12px;
+  background:var(--bg-card);border:0;border-radius:10px;cursor:pointer;
+  padding:11px 12px;font-family:var(--font-cur);text-align:left;color:var(--tx-mid);
+  transition:.15s;position:relative;
+  box-shadow:inset 0 0 0 1px transparent;
 }
-.imp-input:focus{box-shadow:inset 0 0 0 1px rgba(255,215,0,.35)}
-.imp-ta{
-  width:100%;min-height:190px;resize:vertical;
-  background:var(--bg-app);border:0;border-radius:9px;
-  padding:10px 11px;color:var(--tx-mid);
-  font-family:var(--font-num);font-size:11.5px;font-weight:600;line-height:1.7;
-  outline:none;white-space:pre;overflow-wrap:normal;overflow-x:auto;
-}
-.imp-ta::placeholder{color:#4A4A4A;font-family:var(--font-cur)}
-.imp-ta:focus{box-shadow:inset 0 0 0 1px rgba(255,215,0,.3)}
-.imp-ta.out{min-height:220px;color:var(--tx-sub)}
+.th-opt:hover{background:var(--bg-card2)}
+.th-opt.active{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.th-info{flex:1;min-width:0}
+.th-name{font-size:12.5px;font-weight:700;color:var(--tx-hi);letter-spacing:.4px}
+.th-desc{font-size:10px;color:var(--tx-dim);font-weight:600;margin-top:2px;line-height:1.5}
+.th-check{position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  width:18px;height:18px;border-radius:50%;border:2px solid var(--tx-dim);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;font-weight:700}
+.th-opt.active .th-check{border-color:var(--accent);background:var(--accent);color:#000}
+.th-prevs{display:flex;gap:3px}
+.th-prev{width:22px;height:22px;border-radius:6px;border:1px solid var(--divider)}
+.th-reset{margin-top:6px;width:100%;background:var(--bg-card);border:0;border-radius:9px;
+  padding:9px 12px;font-size:11px;font-weight:700;color:var(--tx-sub);letter-spacing:.5px;
+  cursor:pointer;font-family:var(--font-cur);transition:.15s}
+.th-reset:hover{background:var(--bg-card2);color:var(--tx-hi)}
+.th-loading{font-size:10.5px;color:var(--tx-dim);font-weight:600;margin-top:2px;line-height:1.7}
+.th-loading code{background:var(--bg-app);padding:1px 5px;border-radius:4px;
+  font-family:var(--font-num);font-size:10px;color:var(--accent)}
 
-.imp-acts{display:flex;gap:7px;margin-top:11px}
-.imp-btn{
-  flex:1;background:var(--gold);color:#121212;border:0;border-radius:9px;
-  padding:10px 12px;font-size:13px;font-weight:700;letter-spacing:1px;
-  cursor:pointer;font-family:var(--font-cur);transition:.15s;
-}
-.imp-btn:hover{filter:brightness(1.08)}
-.imp-btn:active{transform:scale(.98)}
-.imp-btn.ghost{background:var(--bg-card2);color:var(--tx-sub)}
-.imp-btn.ghost:hover{background:#303030;color:var(--tx-hi);filter:none}
-
-.imp-tabs{display:flex;gap:6px;margin-bottom:9px}
-.imp-tab{
-  flex:1;background:var(--bg-card);border:0;border-radius:8px;
-  padding:8px 6px;font-size:11.5px;font-weight:700;color:var(--tx-dim);
-  cursor:pointer;font-family:var(--font-cur);transition:.15s;
-}
-.imp-tab.active{background:rgba(255,215,0,.12);color:var(--gold);
-  box-shadow:inset 0 0 0 1px rgba(255,215,0,.35)}
-
-.imp-warn{
-  background:rgba(255,215,0,.08);border-radius:8px;padding:8px 10px;
-  font-size:11px;color:var(--gold);font-weight:600;line-height:1.75;margin-bottom:9px;
-}
-.imp-tip{
-  margin-top:11px;padding-top:10px;border-top:1px solid var(--divider-soft);
-  font-size:10.5px;color:var(--tx-dim);font-weight:600;line-height:1.85;
-}
-.imp-tip b{color:var(--tx-sub);font-weight:700}
-.imp-tip code{background:var(--bg-app);padding:1px 5px;border-radius:4px;
-  font-family:var(--font-num);font-size:10px;color:var(--gold)}
-
-/* 预览统计 */
-.pv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:11px}
-.pv-cell{background:var(--bg-app);border-radius:8px;padding:8px 10px}
-.pv-cell .k{font-size:9.5px;color:var(--tx-dim);font-weight:700;letter-spacing:.5px}
-.pv-cell .v{font-size:17px;font-weight:700;margin-top:2px;line-height:1.2;
-  font-variant-numeric:tabular-nums}
-.v-ok{color:var(--down)} .v-new{color:var(--gold)} .v-warn{color:var(--up)}
-
-.pv-sec{margin-top:12px}
-.pv-sec h4{margin:0 0 7px;font-size:10.5px;font-weight:700;color:var(--tx-dim);letter-spacing:.8px}
-.pv-list{max-height:168px;overflow-y:auto;background:var(--bg-app);border-radius:8px;padding:7px 9px}
-.pv-list::-webkit-scrollbar{width:0}
-.pv-item{display:flex;align-items:center;gap:8px;padding:5px 0;
-  border-bottom:1px solid var(--divider-soft);font-size:11.5px;font-weight:600}
-.pv-item:last-child{border-bottom:0}
-.pv-item .n{flex:1;min-width:0;color:var(--tx-hi);font-weight:700;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pv-item .c{color:var(--tx-dim);font-size:10px;flex-shrink:0}
-.pv-item .p{font-family:var(--font-num);color:var(--tx-mid);flex-shrink:0;
-  font-variant-numeric:tabular-nums}
-.pv-empty{padding:14px 0;text-align:center;color:var(--tx-dim);font-size:11px;font-weight:600}
+/* （导入功能已移除，相关样式一并清理） */

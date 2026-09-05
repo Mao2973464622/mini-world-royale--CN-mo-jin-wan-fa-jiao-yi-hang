@@ -1,7 +1,7 @@
 /* =============================================================
    摸金交易行 · 涨跌看板
-   数据源：data/items.json  +  data/prices.json
-   更新数据只需改 prices.json，页面刷新即生效。
+   数据源：data/items.json  +  data/index.json  +  data/snapshots/*.json
+   数据按快照拆分存储，新增记录只加一个新文件，不改旧数据。
    ============================================================= */
 (function () {
   "use strict";
@@ -57,18 +57,36 @@
   };
 
   /* ---------------- 载入数据 ---------------- */
+  // 数据按快照拆分：index.json 存快照元数据，snapshots/<id>.json 存每份价格表。
+  // 加载时先取索引，再并行拉取全部快照文件，拼合成 PRICES = {s1:{...}, s2:{...}, ...}
+  // 对外（compute / render 等）接口与单文件时代完全一致，无需改动其他逻辑。
   async function loadData() {
     const bust = "?t=" + Date.now();          // 绕过浏览器缓存
-    const [a, b] = await Promise.all([
-      fetch("data/items.json"  + bust, { cache: "no-store" }).then(r => r.json()),
-      fetch("data/prices.json" + bust, { cache: "no-store" }).then(r => r.json()),
+    const noStore = { cache: "no-store" };
+    const j = (u) => fetch(u + bust, noStore).then((r) => {
+      if (!r.ok) throw new Error("加载失败：" + u);
+      return r.json();
+    });
+
+    const [a, index] = await Promise.all([
+      j("data/items.json"),
+      j("data/index.json"),
     ]);
     CATS = a.cats || {};
     GROUPS = a.groups || [];
     ITEMS = a.items || [];
-    SNAPSHOTS = b.snapshots || [];
-    PRICES = b.prices || {};
-    DATA_UPDATED = b.updated || "";
+
+    const snaps = index.snapshots || [];
+    // 并行拉取每个快照文件
+    const priceMaps = await Promise.all(
+      snaps.map((s) => j(`data/snapshots/${s.id}.json`))
+    );
+    const prices = {};
+    snaps.forEach((s, i) => { prices[s.id] = priceMaps[i].prices || {}; });
+
+    SNAPSHOTS = snaps;
+    PRICES = prices;
+    DATA_UPDATED = index.updated || "";
     if (!SNAPSHOTS.length || !ITEMS.length) throw new Error("数据为空");
   }
 
@@ -604,7 +622,7 @@
       $("#bootMsg").innerHTML = isFile
         ? `检测到以 <code>file://</code> 打开，浏览器会拦截数据读取。<br>
            请在本目录执行 <code>python3 -m http.server</code>，<br>再访问 <code>http://localhost:8000</code>`
-        : `数据载入失败：${err.message}<br>请确认 <code>data/items.json</code> 与 <code>data/prices.json</code> 存在`;
+        : `数据载入失败：${err.message}<br>请确认 <code>data/items.json</code>、<code>data/index.json</code> 与 <code>data/snapshots/*.json</code> 存在`;
       return;
     }
 
